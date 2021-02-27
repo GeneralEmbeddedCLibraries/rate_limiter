@@ -169,7 +169,7 @@ rate_limiter_status_t rate_limiter_init(p_rate_limiter * p_rl_inst, const float3
 * @note User shall provide cyclic call of that function with a value of dt
 * 		given at initialization phase.
 *
-* @param[out]  	p_rl_inst	- Pointer to rate limiter instance
+* @param[out]  	rl_inst		- Pointer to rate limiter instance
 * @param[in]  	x			- Input signal
 * @return       y			- Output (slew limited) signal
 */
@@ -217,7 +217,7 @@ float32_t rate_limiter_update(p_rate_limiter rl_inst, const float32_t x)
 /*!
 * @brief    Get success initialization flag
 *
-* @param[out]  	p_rl_inst	- Pointer to rate limiter instance
+* @param[out]  	rl_inst		- Pointer to rate limiter instance
 * @return       is_init		- Success initialization flag
 */
 ////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ bool rate_limiter_is_init(p_rate_limiter rl_inst)
 *
 * @note Slew rate limit has same logic as with initialization function.
 *
-* @param[out]  	p_rl_inst	- Pointer to rate limiter instance
+* @param[out]  	rl_inst		- Pointer to rate limiter instance
 * @param[in]  	rise_rate	- Rising slew rate
 * @param[in]  	fall_rate	- Falling slew rate
 * @return       status		- Either OK or Error
