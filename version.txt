@@ -1,0 +1,12 @@
+//============================================================
+// Version 1.0.0 (27.02.2021)
+//============================================================
+
+Features/Changes:
+ - Initial implementation of rate limiter
+ 
+Solved Issues:
+
+Known Issues:
+
+TODO: 
