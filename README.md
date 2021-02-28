@@ -1,12 +1,10 @@
 # Rate limiter
 Rate limiter implementation in C for general DSP purposes. Module works on floating point numbers and support configuration of rise and fall rate of signals. 
 
-Filter memory space is dynamically allocated and success of allocation is taken into consideration before using that instance.
+Rate limiter memory space is dynamically allocated and success of allocation is taken into consideration before using that instance.
 
 #### Dependencies
-Filter module needs ring buffer in order to store data. Ring buffer sources can be found under this [link](https://github.com/Misc-library-for-DSP/ring_buffer). 
-
-Definition of flaot32_t must be provided by user. In current implementation it is defined in "*project_config.h*". Just add following statement to your code where it suits the best.
+Definition of float32_t must be provided by user. In current implementation it is defined in "*project_config.h*". Just add following statement to your code where it suits the best.
 
 ```C
 // Define float
