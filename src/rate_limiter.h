@@ -42,15 +42,15 @@ typedef enum
 /**
  * 	Pointer to slew rate limiter instance
  */
-typedef struct rate_limiter_s * p_rate_limiter;
+typedef struct rate_limiter_s * p_rate_limiter_t;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 ////////////////////////////////////////////////////////////////////////////////
-rate_limiter_status_t 	rate_limiter_init			(p_rate_limiter * p_rl_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt);
-float32_t				rate_limiter_update			(p_rate_limiter rl_inst, const float32_t x);
-bool					rate_limiter_is_init		(p_rate_limiter rl_inst);
-rate_limiter_status_t	rate_limiter_change_rate	(p_rate_limiter rl_inst, const float32_t rise_rate, const float32_t fall_rate);
+rate_limiter_status_t 	rate_limiter_init			(p_rate_limiter_t * p_rl_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt);
+float32_t				rate_limiter_update			(p_rate_limiter_t rl_inst, const float32_t x);
+bool					rate_limiter_is_init		(p_rate_limiter_t rl_inst);
+rate_limiter_status_t	rate_limiter_change_rate	(p_rate_limiter_t rl_inst, const float32_t rise_rate, const float32_t fall_rate);
 
 #endif // __RATE_LIMITER_H
 
