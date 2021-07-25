@@ -1,10 +1,13 @@
+// Copyright (c) 2021 Ziga Miklosic
+// All Rights Reserved
+// This software is under MIT licence (https://opensource.org/licenses/MIT)
 ////////////////////////////////////////////////////////////////////////////////
 /**
 *@file      rate_limiter.c
 *@brief     Rate limiter for general use
 *@author    Ziga Miklosic
 *@date      19.02.2021
-*@version   V1.0.0
+*@version   V1.0.1
 *
 *@section Description
 *
