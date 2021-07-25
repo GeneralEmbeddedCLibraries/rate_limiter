@@ -1,10 +1,13 @@
+// Copyright (c) 2021 Ziga Miklosic
+// All Rights Reserved
+// This software is under MIT licence (https://opensource.org/licenses/MIT)
 ////////////////////////////////////////////////////////////////////////////////
 /**
 *@file      rate_limiter.c
 *@brief     Rate limiter for general use
 *@author    Ziga Miklosic
 *@date      19.02.2021
-*@version   V1.0.0
+*@version   V1.0.1
 *
 *@section Description
 *
@@ -130,7 +133,7 @@ static float32_t rate_limiter_calc_rate_factor(const float32_t dt, const float32
 * @return       status		- Either OK or Error
 */
 ////////////////////////////////////////////////////////////////////////////////
-rate_limiter_status_t rate_limiter_init(p_rate_limiter * p_rl_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
+rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_rl_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
 {
 	rate_limiter_status_t status = eRATE_LIMITER_OK;
 
@@ -174,7 +177,7 @@ rate_limiter_status_t rate_limiter_init(p_rate_limiter * p_rl_inst, const float3
 * @return       y			- Output (slew limited) signal
 */
 ////////////////////////////////////////////////////////////////////////////////
-float32_t rate_limiter_update(p_rate_limiter rl_inst, const float32_t x)
+float32_t rate_limiter_update(p_rate_limiter_t rl_inst, const float32_t x)
 {
 	float32_t y = 0.0f;
 	float32_t dx = 0.0f;
@@ -221,7 +224,7 @@ float32_t rate_limiter_update(p_rate_limiter rl_inst, const float32_t x)
 * @return       is_init		- Success initialization flag
 */
 ////////////////////////////////////////////////////////////////////////////////
-bool rate_limiter_is_init(p_rate_limiter rl_inst)
+bool rate_limiter_is_init(p_rate_limiter_t rl_inst)
 {
 	bool is_init = false;
 
@@ -245,7 +248,7 @@ bool rate_limiter_is_init(p_rate_limiter rl_inst)
 * @return       status		- Either OK or Error
 */
 ////////////////////////////////////////////////////////////////////////////////
-rate_limiter_status_t rate_limiter_change_rate(p_rate_limiter rl_inst, const float32_t rise_rate, const float32_t fall_rate)
+rate_limiter_status_t rate_limiter_change_rate(p_rate_limiter_t rl_inst, const float32_t rise_rate, const float32_t fall_rate)
 {
 	rate_limiter_status_t status = eRATE_LIMITER_ERROR;
 
