@@ -34,6 +34,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * 	Module version
+ */
+#define RATE_LIMITER_VER_MAJOR			( 1 )
+#define RATE_LIMITER_VER_MINOR			( 0 )
+#define RATE_LIMITER_VER_DEVELOP		( 1 )
+
+/**
  * 	Status
  */
 typedef enum
