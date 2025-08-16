@@ -15,7 +15,7 @@ In order to be part of *General Embedded C Libraries Ecosystem* this module must
 root/middleware/rate_limiter/"module_space"
 ```
 
- #### API
+ ## **API**
 
 | API Functions | Description | Prototype |
 | --- | ----------- | ----- |
@@ -24,7 +24,8 @@ root/middleware/rate_limiter/"module_space"
 | **rate_limiter_hndl**         | Handle rate limiter               | float32_t rate_limiter_hndl(const p_rate_limiter_t inst, const float32_t x) |
 | **rate_limiter_change_rate**  | Change rate limiter slew          | rate_limiter_status_t rate_limiter_change_rate(const p_rate_limiter_t inst, const float32_t rise_rate, const float32_t fall_rate) |
 
-##### Example of usage
+
+## **Usage**
 
 ```C
 
