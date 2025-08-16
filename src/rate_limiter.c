@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Ziga Miklosic
+// Copyright (c) 2025 Ziga Miklosic
 // All Rights Reserved
 // This software is under MIT licence (https://opensource.org/licenses/MIT)
 ////////////////////////////////////////////////////////////////////////////////
@@ -6,8 +6,9 @@
 *@file      rate_limiter.c
 *@brief     Rate limiter for general use
 *@author    Ziga Miklosic
-*@date      19.02.2021
-*@version   V1.0.1
+*@mail      ziga.miklosic@gmail.com
+*@date      16.08.2025
+*@version   V2.0.0
 *
 *@section Description
 *
@@ -53,7 +54,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "rate_limiter.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,29 +77,10 @@ typedef struct rate_limiter_s
 ////////////////////////////////////////////////////////////////////////////////
 // Function prototypes
 ////////////////////////////////////////////////////////////////////////////////
-static float32_t rate_limiter_calc_rate_factor(const float32_t dt, const float32_t slew_rate);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 ////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-/*!
-* @brief    Calculate slew rate factor base on update time.
-*
-* @param[in]  	dt			- Update (period) time
-* @param[in]	slew_rate	- Wanted slew rate
-* @return       k_rate		- Slew rate factor
-*/
-////////////////////////////////////////////////////////////////////////////////
-static float32_t rate_limiter_calc_rate_factor(const float32_t dt, const float32_t slew_rate)
-{
-	float32_t k_rate = 0.0f;
-
-	k_rate = ( slew_rate * dt );
-
-	return k_rate;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
@@ -126,35 +107,35 @@ static float32_t rate_limiter_calc_rate_factor(const float32_t dt, const float32
 * 			- for 1V/s -> put rise/fall rate = 1.0
 * 			- for 0.5V/s -> put rise/fall rate = 0.5
 *
-* @param[out]  	p_rl_inst	- Pointer to rate limiter instance
-* @param[in]  	rise_rate	- Rising slew rate
-* @param[in]  	fall_rate	- Falling slew rate
-* @param[in]  	dt			- Update (period) time
-* @return       status		- Either OK or Error
+* @param[out]  	p_inst      - Pointer to rate limiter instance
+* @param[in]  	rise_rate   - Rising slew rate
+* @param[in]  	fall_rate   - Falling slew rate
+* @param[in]  	dt          - Update (period) time in seconds
+* @return       status      - Either OK or Error
 */
 ////////////////////////////////////////////////////////////////////////////////
-rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_rl_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
+rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
 {
 	rate_limiter_status_t status = eRATE_LIMITER_OK;
 
-	if 	(	( NULL != p_rl_inst )
+	if 	(	( NULL != p_inst )
 		&& 	( dt > 0.0f ))
 	{
 		// Allocate space
-		*p_rl_inst = malloc( sizeof( rate_limiter_t ));
+		*p_inst = malloc( sizeof( rate_limiter_t ));
 
-		if ( NULL != *p_rl_inst )
+		if ( NULL != *p_inst )
 		{
 			// Init previous value & period
-			(*p_rl_inst)->x_prev = 0.0f;
-			(*p_rl_inst)->dt = dt;
+			(*p_inst)->x_prev = 0.0f;
+			(*p_inst)->dt = dt;
 
 			// Calculate rise/fall factors
-			(*p_rl_inst)->k_rise = rate_limiter_calc_rate_factor( dt, rise_rate );
-			(*p_rl_inst)->k_fall = rate_limiter_calc_rate_factor( dt, fall_rate );
+			(*p_inst)->k_rise = rise_rate * dt;
+			(*p_inst)->k_fall = fall_rate * dt;
 
 			// Init success
-			(*p_rl_inst)->is_init = true;
+			(*p_inst)->is_init = true;
 		}
 	}
 	else
@@ -167,50 +148,65 @@ rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_rl_inst, const floa
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-* @brief    Update rate limiter
+* @brief    Check if rate limiter instance is initialized
 *
-* @note User shall provide cyclic call of that function with a value of dt
-* 		given at initialization phase.
-*
-* @param[out]  	rl_inst		- Pointer to rate limiter instance
-* @param[in]  	x			- Input signal
-* @return       y			- Output (slew limited) signal
+* @param[out]   inst    - Pointer to rate limiter instance
+* @return       is_init - Success initialization flag
 */
 ////////////////////////////////////////////////////////////////////////////////
-float32_t rate_limiter_update(p_rate_limiter_t rl_inst, const float32_t x)
+bool rate_limiter_is_init(const p_rate_limiter_t inst)
+{
+    bool is_init = false;
+
+    if ( NULL != inst )
+    {
+        is_init = inst->is_init;
+    }
+
+    return is_init;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/*!
+* @brief    Update the rate limiter with a new input value
+**
+* @param[out]  	inst - Pointer to rate limiter instance
+* @param[in]  	x    - Input signal
+* @return       y    - Output (slew limited) signal
+*/
+////////////////////////////////////////////////////////////////////////////////
+float32_t rate_limiter_hndl(const p_rate_limiter_t inst, const float32_t x)
 {
 	float32_t y = 0.0f;
 	float32_t dx = 0.0f;
 
 	// Check for instance and initialization
-	if ( NULL != rl_inst )
+	if  (   ( NULL != inst )
+	    &&  ( true == inst->is_init  ))
 	{
-		if ( true == rl_inst->is_init )
-		{
-			// Calculate change
-			dx = x - rl_inst->x_prev;
+        // Calculate change
+        dx = x - inst->x_prev;
 
-			// Rising limit
-			if ( dx >= rl_inst->k_rise )
-			{
-				y = rl_inst->x_prev + rl_inst->k_rise;
-			}
+        // Rising limit
+        if ( dx >= inst->k_rise )
+        {
+            y = inst->x_prev + inst->k_rise;
+        }
 
-			// Falling limit
-			else if ( dx <= -( rl_inst->k_fall ))
-			{
-				y = rl_inst->x_prev - rl_inst->k_fall;
-			}
+        // Falling limit
+        else if ( dx <= -( inst->k_fall ))
+        {
+            y = inst->x_prev - inst->k_fall;
+        }
 
-			// No limitations...
-			else
-			{
-				y = x;
-			}
+        // No limitations...
+        else
+        {
+            y = x;
+        }
 
-			// Store current value
-			rl_inst->x_prev = y;
-		}
+        // Store current value
+        inst->x_prev = y;
 	}
 
 	return y;
@@ -218,51 +214,27 @@ float32_t rate_limiter_update(p_rate_limiter_t rl_inst, const float32_t x)
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-* @brief    Get success initialization flag
+* @brief    Change the rise and fall rates of a rate limiter instance
 *
-* @param[out]  	rl_inst		- Pointer to rate limiter instance
-* @return       is_init		- Success initialization flag
+* @param[out]  	inst        - Pointer to rate limiter instance
+* @param[in]  	rise_rate   - Rising slew rate
+* @param[in]  	fall_rate   - Falling slew rate
+* @return       status      - Either OK or Error
 */
 ////////////////////////////////////////////////////////////////////////////////
-bool rate_limiter_is_init(p_rate_limiter_t rl_inst)
-{
-	bool is_init = false;
-
-	if ( NULL != rl_inst )
-	{
-		is_init = rl_inst->is_init;
-	}
-
-	return is_init;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/*!
-* @brief    Change slew rate
-*
-* @note Slew rate limit has same logic as with initialization function.
-*
-* @param[out]  	rl_inst		- Pointer to rate limiter instance
-* @param[in]  	rise_rate	- Rising slew rate
-* @param[in]  	fall_rate	- Falling slew rate
-* @return       status		- Either OK or Error
-*/
-////////////////////////////////////////////////////////////////////////////////
-rate_limiter_status_t rate_limiter_change_rate(p_rate_limiter_t rl_inst, const float32_t rise_rate, const float32_t fall_rate)
+rate_limiter_status_t rate_limiter_change_rate(const p_rate_limiter_t inst, const float32_t rise_rate, const float32_t fall_rate)
 {
 	rate_limiter_status_t status = eRATE_LIMITER_ERROR;
 
 	// Check for instance and initialization
-	if ( NULL != rl_inst )
-	{
-		if ( true == rl_inst->is_init )
-		{
-			rl_inst->k_rise = rate_limiter_calc_rate_factor( rl_inst->dt, rise_rate );
-			rl_inst->k_fall = rate_limiter_calc_rate_factor( rl_inst->dt, fall_rate );
+	if  (   ( NULL != inst )
+	    &&  ( true == inst->is_init ))
+    {
+        inst->k_rise = rise_rate * inst->dt;
+        inst->k_fall = fall_rate * inst->dt;
 
-			status = eRATE_LIMITER_OK;
-		}
-	}
+        status = eRATE_LIMITER_OK;
+    }
 
 	return status;
 }
