@@ -134,6 +134,23 @@ rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_inst, const float32
 	return status;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/*!
+* @brief    Initialize statically rate limiter
+*
+* @note Rising/Falling slew rate is references to change on seconds.
+*
+*       E.g.:
+*           - for 1V/s -> put rise/fall rate = 1.0
+*           - for 0.5V/s -> put rise/fall rate = 0.5
+*
+* @param[out]   p_inst      - Pointer to rate limiter instance
+* @param[in]    rise_rate   - Rising slew rate
+* @param[in]    fall_rate   - Falling slew rate
+* @param[in]    dt          - Update (period) time in seconds
+* @return       status      - Either OK or Error
+*/
+////////////////////////////////////////////////////////////////////////////////
 rate_limiter_status_t rate_limiter_init_static(p_rate_limiter_t inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
 {
     rate_limiter_status_t status = eRATE_LIMITER_OK;
