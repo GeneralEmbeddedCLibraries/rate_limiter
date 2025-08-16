@@ -58,18 +58,6 @@
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
- * 	Slew rate limiter
- */
-typedef struct rate_limiter_s
-{
-	float32_t 	x_prev;		/**<Previous value of input */
-	float32_t 	k_rise;		/**<Rising slew rate factor*/
-	float32_t 	k_fall;		/**<Falling slew rate factor*/
-	float32_t 	dt;			/**<Period of update */
-	bool		is_init;	/**<Rate limiter initialization success flag */
-} rate_limiter_t;
-
 ////////////////////////////////////////////////////////////////////////////////
 // Variables
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +132,31 @@ rate_limiter_status_t rate_limiter_init(p_rate_limiter_t * p_inst, const float32
 	}
 
 	return status;
+}
+
+rate_limiter_status_t rate_limiter_init_static(p_rate_limiter_t inst, const float32_t rise_rate, const float32_t fall_rate, const float32_t dt)
+{
+    rate_limiter_status_t status = eRATE_LIMITER_OK;
+
+    if ( dt > 0.0f )
+    {
+        // Init previous value & period
+        inst->x_prev = 0.0f;
+        inst->dt = dt;
+
+        // Calculate rise/fall factors
+        inst->k_rise = rise_rate * dt;
+        inst->k_fall = fall_rate * dt;
+
+        // Init success
+        inst->is_init = true;
+    }
+    else
+    {
+        status = eRATE_LIMITER_ERROR;
+    }
+
+    return status;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
