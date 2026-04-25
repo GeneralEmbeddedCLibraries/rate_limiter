@@ -75,6 +75,7 @@ rate_limiter_status_t rate_limiter_init_static  (p_rate_limiter_t inst, const fl
 bool                  rate_limiter_is_init      (const p_rate_limiter_t inst);
 float32_t             rate_limiter_hndl		    (const p_rate_limiter_t inst, const float32_t x);
 rate_limiter_status_t rate_limiter_change_rate  (const p_rate_limiter_t inst, const float32_t rise_rate, const float32_t fall_rate);
+rate_limiter_status_t rate_limiter_reset        (const p_rate_limiter_t inst);
 
 #endif // __RATE_LIMITER_H
 

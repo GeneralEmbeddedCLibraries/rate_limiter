@@ -269,6 +269,22 @@ rate_limiter_status_t rate_limiter_change_rate(const p_rate_limiter_t inst, cons
 	return status;
 }
 
+rate_limiter_status_t rate_limiter_reset(const p_rate_limiter_t inst)
+{
+    rate_limiter_status_t status = eRATE_LIMITER_ERROR;
+
+    // Check for instance and initialization
+    if  (   ( NULL != inst )
+        &&  ( true == inst->is_init ))
+    {
+        inst->x_prev = 0.0f;
+
+        status = eRATE_LIMITER_OK;
+    }
+
+    return status;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /**
 * @} <!-- END GROUP -->
